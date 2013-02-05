@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Trinfactor III</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Coming soon: A sensor multiplexor for LEGO NXT">
+<style type="text/css">
+body {
+    font-family: sans-serif;
+    margin: 0px; 
+	padding : 25px;
+	padding-top: 45px;
+	padding-left: 25px;
+	background-color :  white;
+    }
+.question{
+	background: url(../images/open.png) no-repeat 0 11px;
+	padding: 10px 0 0 25px;
+	cursor: pointer;
+	color:#006699; 
+	font: Times;
+	font-size: 16px;
+}
+.question.close {
+	background-image: url(../images/close.png);
+}
+.answer {
+	margin-left: 25px;	
+}
+.top {  position:fixed;
+	text-decoration: none;
+	display: block;
+	z-index: 500;
+	top: 0px;
+	left: 0px;	
+	width: 100%;
+	height: 40px;
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
+	border-right: 1px solid black;
+	background-color:black;
+	box-shadow: 0px 5px 23px 3px #888888;
+	}
+hr{
+	margin-top: 4px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	margin-left: 0px;
+	border-right-width-value: 0px;
+	border-left-width-value: 0px;
+	border-right-style-value: none;
+	border-left-style-value: none;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #A2BDCA;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #ffffff;
+}
+.side{
+	font-family: sans-serif; 
+	font-size: 20px;
+	text-align: right;
+	position:fixed;
+	text-decoration: none;
+	top:90px;
+	left:110px;
+}
+a{
+	text-decoration: none;
+	color:#CC3300;
+}
+.logo
+	{
+	cursor: pointer;
+	font-family:"Arial Black";
+	font-size: 28px;
+	color:#FF9933; 
+	margin-top : 0px;
+	margin-left : 10px;
+	padding: 0px;
+	}
+#hoverlogo:hover{
+	color:#006699;
+}
+#open{
+	color: #CCE0CC;
+	}
+.links{ position: absolute;
+	left: 851px;
+	top: 42px;
+	width: 277px;
+	height: 400px;
+	background-color: #FFF5E0;
+	border-left: 1px solid black;
+	border-right: 1px solid #FF9933;
+	}
+.images{ position: absolute;
+	left: 130px;
+	top: 42px;
+	width: 110px;
+	height: 400px;
+	background-color: #525252;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	}
+.imagebox{ 
+	top: 42px;
+	height:370px;
+	width: 618px;
+
+	}
+#display_image{
+	width: 450px;
+	height: 357px;
+}
+.thumbnail_image{
+	height:115px;
+	width:150px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+}
+
+#thumbnails{
+	padding-top: 5px;
+	height: 100%;
+	width:130px;
+	margin-left: 5px;
+}
+#photo{
+	position:absolute;
+	top:59px;
+	left: 435px; 
+	height: 370px;
+	padding-left: 10px;
+	padding-right: 5px;
+	
+}
+#description{
+	position:relative;
+	height: 100%;
+	width:130px;
+	margin-left: 5px;
+}
+
+hr.bodyline
+{
+	margin-top: 18px;
+	margin-right: 0px;
+	margin-bottom: 18px;
+	margin-left: 0px;
+	border-right-width-value: 0px;
+	border-left-width-value: 0px;
+	border-right-style-value: none;
+	border-left-style-value: none;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #B2B2B2
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #FFFFFF;
+}
+hr.thumbline{
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	border-right-width-value: 0px;
+	border-left-width-value: 0px;
+	border-right-style-value: none;
+	border-left-style-value: none;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #B2B2B2
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #FFFFFF;
+}
+#loginform{
+	font-size: 14px;
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-bottom: 1px;
+	display: none;
+	position: fixed;
+	z-index: 1200;
+	background-color: white;
+	top:36px;
+	right:0px;
+	color: black;
+	margin : 5px;
+	border: 1px solid black;
+	box-shadow: 5px 5px 23px 3px #888888;
+	}  
+#logoutform{
+	font-size: 14px;
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-bottom: 1px;
+	display: none;
+	position: fixed;
+	z-index: 1200;
+	background-color: white;
+	top:36px;
+	right:0px;
+	color: black;
+	margin : 5px;
+	border: 1px solid black;
+	box-shadow: 5px 5px 23px 3px #888888;
+	} 
+.logging
+	{
+	cursor: pointer;
+	color: #FF9933;
+	text-align:center;
+	background-color:black;
+	border-right:1px solid #666666;
+	border-left:1px solid #666666;
+	position: absolute;
+	right : 15px;
+	top: 0px;
+	height:28px;
+	padding-top: 12px;
+	padding-right:7px;
+	padding-left:7px;
+	}
+
+.input {
+	width:160px;
+	height:15px;
+    	border: 1px solid black;
+    	background: #ffc;
+}
+.input:hover {
+    border: 1px solid #FF9933;
+    background: #ffc;
+}
+#logoutform:hover{
+	border: 1px solid black;
+    	background: #FF9933;
+}
+.button {
+	float: none;
+    	display: block;
+    	width: 100px;
+    	margin: 10px auto;
+    	border: 1px solid black;
+    	background: #FF9933;
+	border-radius: 10px;
+	color: white;
+}
+.button:hover {
+    border: 1px solid #f00;
+    background: #E6E6E6;
+}
+#nav{
+	cursor: pointer;
+	color: #006699;
+}
+#nav:hover{
+	color: #FF9933;
+}
+.label {text-align: left;
+		color: black;
+		font-size: 14px;
+		font: Arial;
+		}
+.label_signup{
+	text-align: right;
+		color: black;
+		font-size: 14px;
+		font: Arial;
+}
+.error {color: red;
+	text-align:left;}
+.right-side{
+	border-radius: 12px;
+	border: 1px solid #EBE3DD;
+	background-color: #E6ECF3;
+	margin-top: 10px;
+	margin-left: 200px;
+	margin-right: 10px;
+	padding: 15px;
+	padding-top: 30px;
+	height: 100%;
+}
+.heading{
+	font: Arial;
+	font-size: 18px;
+	color: black;
+}
+.des_text{
+	font: Arial;
+	font-size: 14px;
+	color: 	#797B7E;
+	padding-bottom: 0px;
+}
+
+
+#hoversignup:hover{
+	color: #FF9933;
+}
+.signup:hover{
+	background-color: #007A00;
+	color:#006699;
+}
+.signup{
+	position:fixed;
+	top:255px;
+	left:85px;
+	width:120px;
+	height:25px;
+	background-color: #00A300;
+	text-align: center;
+	font-size: 20px;
+	font: Arial;
+	box-shadow: 1px 1px 42px 3px #888888;
+	border-radius: 18px;
+	border: 1px solid #66E066;
+}
+.footer
+{	padding-top: 10px;
+	width: 100%;
+	height: 76px;
+	border-top-width: 1px solid black;
+	background-color: #336699;
+	color: #E6E6E6;
+}
+.sponsor_image{
+	height:70px;
+	width:150px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+#TCRST{
+	padding-top: 3px;
+	padding-left: 160px;
+}
+#NCIIA{
+	width:200px;
+}
+#trincoll{
+	width:130px;
+}
+#footer_sponsor{
+	margin-top: 20px;
+	margin-left: 25px;
+	font-size: 13px;
+}
+#copyright{
+	margin-top: 25px;
+	font-size: 13px;
+	margin-right: 50px;
+}
+.signup_form{
+	padding: 3px;
+	font-size: 14px;
+	margin: 5px;
+	width:275px;
+	height:25px;
+    border: 1px solid #EBE3DD;
+    background: white;
+}
+.signup_form:hover {
+    border: 1px solid white;
+    background: #CCCCCC;
+}
+ 
+.red{
+	font-size: 14px;
+	color:#CC3300;
+}
+
+
+.button1 {
+ 
+	/*basic styles*/
+	width: 150px;  height: 35px;  color: white; background-color: #d46d45;
+	text-align: center;  font-size: 18px;
+ 	vertical-align: center;
+ 	margin: 10px;
+ 	margin-left: 25px;
+ 	margin-bottom: 15px;
+	/*gradient styles*/
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#d46d45), to(#b1432a));
+	background: -moz-linear-gradient(19% 75% 90deg,#b1432a, #d46d45);
+ 
+	/*border styles*/
+	border-top: solid 2px #e28d79;
+	border-bottom: solid 1px #51281f;
+	border-right: solid 1px #d46d45;
+	border-left: solid 1px #d46d45;
+	-moz-border-radius: 30px;
+	-webkit-border-radius: 30px;
+	border-radius: 30px;
+ 
+}
+ 
+ 
+.button1 p{
+	font-size: 25px;
+	line-height: 50px;
+	font-family: 'Trebuchet MS', sans-serif;
+}
+ 
+.button1:hover {
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#b1432a), to(#d46d45));
+	background: -moz-linear-gradient(19% 75% 90deg,#d46d45, #b1432a);
+	border-top: solid 2px #b1432a;
+	border-bottom: solid 1px #e28d79;
+}
+#Signin{
+	color: #FF9933;
+}
+
+#Signin:hover{
+	color:white;
+}
+#user{
+	color:#FF9933;
+}
+#user:hover{
+	color:white;
+}
+.post-heading {
+    position: relative;
+    left: 0px;
+}
+
+.post-title {
+    font-size: 18px;
+    font-weight: bold;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+}
+
+.post-date {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    color: #999;
+}
+
+.post-content {
+	text-align: left;
+    margin-top: 5px;
+}
+textarea#styled {
+	width: 100%;
+	height: 120px;
+	border: 3px solid #cccccc;
+	padding: 5px;
+	font-family: Tahoma, sans-serif;
+}
+.button_submit{
+	position: relative;
+	left:0px;
+	border: 1px solid black;
+	margin: 0px;
+	left: 0px;
+}
+.button_submit:hover{
+	border: 1px solid white;
+	color: white;
+}
+.title{
+	text-rendering: optimizeLegibility;
+	font-family: ‘Trebuchet MS’, Helvetica, sans-serif;
+	color:#CC3300; 
+	font-size:48px;
+	margin: 15px;
+	margin-top: 20px;
+	font-weight: bold;
+}
+.subtitle{
+	text-rendering: optimizeLegibility;
+	font-family: ‘Trebuchet MS’, Helvetica, sans-serif;
+	color:#474747; 
+	font-size:20px;
+	margin: 15px;
+	margin-top: 20px;
+	text-align: justify;
+}
+.mainphoto {
+    position: relative;
+    left: 0px;
+    display: inline;
+}
+
+.photodes{
+	word-wrap: break-word; 
+	font-family: ‘Trebuchet MS’, Helvetica, sans-serif;
+    font-size: 18px;
+  	display: inline;
+  	position: absolute;
+  	padding-left: 15px;
+  	color: blue;
+  	height: 100%;
+  	max-width: 500px;
+}
+</style>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34379701-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</head>
+<body>
+<div class = "top">
+	<div class= "logo"><a href="/"; style="color:#FF9933"><span id='hoverlogo'>Trinfactor III</span></a></div>
+		<div class="logging">
+		{% if User%} <span id="user">  {{ User }}   </span>{%else%}   <a href="/login"><span id="Signin">Login</span></a>   {% endif %}
+		</div>
+	</div>
+	   <div id='logoutform'>
+    <table>
+    <tr>
+    <td id="logout">
+    <a href="/logout">Logout></a>
+    </td>
+    </tr>     
+    </table>
+    </div>
+
+<script>
+    $(document).ready(function() {
+    $('#user').toggle(
+    function() {
+        var self = $(this);
+        $('#logoutform').show();
+        $('body').click(function(){
+            self.trigger('click');
+        });
+        
+        $(this).css("color","#E6E6E6");
+        },
+    function() {
+        $('#logoutform').hide();
+        $(this).css("color","#FF9933");
+        }
+    ); // end toggle
+    }); // end ready
+</script>
+
+<div class = "side">
+		<a href="/"; ><span id = "nav">Overview</span></a><br>
+		<a href="/firmware"><span id = "nav">Firmware</span></a><br>
+		<a href="/hardware"><span id = "nav">Hardware</span></a><br>
+		<a href="/purchase"><span id = "nav">Purchase</span></a><br>
+		<a href="/faq"><span id = "nav">FAQ</span></a><br>
+		<a href="/contact"><span id = "nav">Contact</span></a><br>
+		{% if User== ""%}
+		<a href="/signup"><span id='nav'>Sign Up</span></a><br>
+		{% endif %}
+		
+</div>
+
+
+
+  {% block content %}
+  {% endblock %}
+
+</body>
+</html>

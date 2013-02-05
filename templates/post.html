@@ -1,0 +1,97 @@
+<script>
+    $(document).ready(function() {
+
+    $('.logging').hover(
+    function(){
+        $(this).css("color","#E6E6E6");
+        },
+    function(){
+        $(this).css("color","#FF9933");
+        }
+            
+    );//end hover
+    $('.logging').toggle(
+    function() {
+        $('#loginform').show();
+        $('body').click(function(){
+            self.trigger('click');
+        });
+        $(this).css("color","#E6E6E6");
+        },
+    function() {
+        $('#loginform').hide();
+        $(this).css("color","#FF9933");
+        }
+    ); // end toggle
+    $('.logging').toggle(
+    function() {
+        var self = $(this);
+        $('#logoutform').show();
+        $('body').click(function(){
+            self.trigger('click');
+        });
+        
+        $(this).css("color","#E6E6E6");
+        },
+    function() {
+        $('#logoutform').hide();
+        $(this).css("color","#FF9933");
+        }
+    ); // end toggle
+    }); // end ready
+</script>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BigZombies' BigBlog</title>
+</head>
+<style type="text/css">
+    body {
+        font-family: sans-serif; width: 800px; margin: 0 auto; padding: 10px;
+    }
+    .error {
+        color: red;
+    }
+    label {
+        display: block; font-size: 20px;
+    }
+    input[type=text] {
+        width: 400px; font-size: 20px; padding: 2px;
+    }
+    textarea {
+        width: 400px; height: 200px; font-size: 17px; font-family: monospace;
+    }
+    input[type=submit] {
+        font-size: 24px;
+    }
+    hr {
+        margin: 20px auto;
+    }
+
+    .art + .art {
+        margin-top: 20px;
+    }
+    .art-title {
+        font-weight: bold; font-size: 20px;
+    }
+    .art-body {
+        margin: 0; font-size: 17px;
+    }
+</style>
+<body>
+    <h1>BigZombies' BigBlog</h1>
+	<a href = "http://biny150.appspot.com">Blog</a>
+	<a href = "http://biny150.appspot.com/logout">LogOut</a>
+	<a href = "http://biny150.appspot.com/signup">SignUp</a> 
+	<a href = "http://biny150.appspot.com/login">LogIn</a> 
+
+    {% for post in posts %}
+    <div class="art">
+        <div class="art-title">{{post.title}}<pre>                            </pre>{{post.created}}</div>
+        <pre class="art-body">{{post.bpost}}</pre>
+    </div>
+    {% endfor %}
+</body>
+</html>

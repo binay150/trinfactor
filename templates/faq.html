@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="right-side">
+<script>
+$(document).ready(function() {
+ $('.answer').hide();
+ $('.question').toggle(
+    function() {
+         $(this).next('.answer').slideDown();
+       $(this).addClass('close');
+    },
+    function() {
+       $(this).next('.answer').fadeOut();
+       $(this).removeClass('close');
+    }
+  ); // end toggle
+}); // end ready
+</script>
+
+<span class = "heading">Frequently Asked Questions</span>
+<div class='question'>When will the product be ready?</div>
+      <div class="answer">
+        <p><span class = "des_text">Product is fully designed, a prototype is built and tested. It works perfectly. However, Trinity College Robot Study team wont be able to ship the product until we recieve about 100 orders.</span></p>
+      </div>
+      <div class='question'>Can I use the firmware or Hardware Schematic for my own projects?</div>
+      <div class="answer">
+        <p><span class = "des_text">Yes. We highly encourage you to do so. Our aim is to make the work accessible for everybody.</span></p>
+      </div>
+      <div class='question'>I have some other questions.</div>
+      <div class="answer">
+        <p><span class = "des_text">Please view the <a href="/contact">contact page</a>. You can either email us using the email addresses in the page or post in the blog. We encourgae you to post technical question in the Blog.</span></p>
+      </div>
+</div>
+{% endblock %}

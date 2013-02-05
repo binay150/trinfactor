@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="right-side">
+   <span class = "heading">Device Firmware</span>
+    <br>
+    <br>
+    <br>
+    <span class = "des_text">Trinfactor III uses PIC 16F677 microcontroller. This page lists the firmware written for Trinfactor. The firmware was written in PIC assembly and I2C application example in PIC 16F website was referenced. In a nutshell, the device uses timer, analog-digital converter, and I2C slave-module in PIC 16F677 uC. There are two LEDs in the device to indicate when the device is turned on and when the battery level fall below 3.2V. Third output turns off the signal to the NFET that controls the power supplied to the sensors. The NFET can be controlled by data sent through the NXT. We will soon post the VI written for NXT. Please check back in few weeks.</span>
+    <hr>
+    <span class = "red">Please feel free to use the firmware in any way you want.</span>
+    <span class = "des_text">If you have any questions or comments please check the FAQ section, or the contact page. We will try our best to answer you.</span>
+    <hr>
+    <div style="margin: 20px;
+  padding: 10px;
+  background-color: #E0FFD1;
+  border: 1px solid black;
+ overflow:auto;width:auto;">
+ <pre style="margin: 0; line-height: 125%">#### Author: Binay Poudel binay150@yahoo.com Robot Study Team Trinity College
+  #include    <span style="color: #303030">&lt;</span>p16f677.inc<span style="color: #303030">&gt;</span>    ; processor specific variable definitions
+__CONFIG _MCLRE_OFF <span style="color: #303030">&amp;</span>_INTRC_OSC_NOCLKOUT <span style="color: #303030">&amp;</span>_WDT_OFF
+
+#define slave_add b<span style="color: #303030">&#39;</span>10001000<span style="color: #303030">&#39;</span>
+#define RX_BUF_LEN 8
+#define sensor_off b<span style="color: #303030">&#39;</span>10001000<span style="color: #303030">&#39;</span>
+#define sensor_on b<span style="color: #303030">&#39;</span>11001000<span style="color: #303030">&#39;</span>
+
+udata
+    on_off res 1
+    Temp res 1
+    state_check res 1
+    see res 1
+    seconds res 1
+    battery_level res 1
+    Index res 1
+    ADCindex res 1
+    ADCcount res 1
+    RXBuffer res RX_BUF_LEN
+;<span style="color: #303030">------------------------------------------------------------------------------------------------</span>
+org 0x00
+goto Start
+org 0x04 ;unlike in 8051, in pic all interrupt event lead PC to this address
+goto interrupt_handler
+
+LFSR macro Address,Offset
+    movlw Address
+    movwf FSR
+    movf Offset,W
+    addwf FSR,F
+    endm
+
+;<span style="color: #303030">-------------------------------------------------------------------------------------------------</span>
+Start
+;<span style="color: #303030">----------</span>Oscillator setup
+banksel OSCCON
+movlw  b<span style="color: #303030">&#39;</span>01110111<span style="color: #303030">&#39;</span>
+movwf  OSCCON      ; set the internal oscillator at 8 Mhz and uses internal clk
+banksel PCON
+bsf PCON,NOT_POR
+bsf PCON,NOT_BOR
+
+;<span style="color: #303030">----------</span>Watchdog disable
+;I dont think we need watch dog timer here so I am going to disable it
+banksel WDTCON
+movlw 0x00
+movwf WDTCON
+
+;<span style="color: #303030">--------------</span>Interrupts setup
+banksel INTCON
+movlw b<span style="color: #303030">&#39;</span>11000000<span style="color: #303030">&#39;</span>
+movwf INTCON ; <span style="color: #008000; font-weight: bold">global</span> interrupts and peripheral interrupts are on
+banksel PIE1 ;timer1 interrupt is on
+bsf PIE1, SSPIE
+bsf PIE1, TMR1IE
+banksel PIR1
+clrf PIR1
+
+;<span style="color: #303030">---------------</span>setting up the address of the device
+banksel SSPADD
+movlw slave_add
+movwf SSPADD
+
+;<span style="color: #303030">--------------</span>setting up the I2C slave 7bit communication
+;<span style="color: #303030">--------------</span>SFRs modified: sspcon <span style="color: #007020">ans</span> SSPSTAT
+;<span style="color: #303030">---------------</span>address is 8 bits long dont know actual address will be LA or R aligned
+banksel SSPCON
+movlw b<span style="color: #303030">&#39;</span>00110110<span style="color: #303030">&#39;</span>
+;<span style="color: #303030">----------------</span>enable clock and set sda <span style="color: #007020">ans</span> scl pins as serial port pins in 7<span style="color: #303030">-</span>bit slave mode
+movwf SSPCON
+banksel SSPSTAT
+clrf SSPSTAT
+;<span style="color: #303030">---------------------</span>ADC setup
+banksel ADCON0
+movlw b<span style="color: #303030">&#39;</span>00001011<span style="color: #303030">&#39;</span> ;pin 12 is input <span style="color: #008000; font-weight: bold">for</span> battery level detector and remains default input <span style="color: #008000; font-weight: bold">for</span> ADC
+movwf ADCON0
+banksel ADCON1
+movlw b<span style="color: #303030">&#39;</span>01000000<span style="color: #303030">&#39;</span> ;ADC operates at FOSC<span style="color: #303030">/</span>4
+movwf ADCON1
+;<span style="color: #303030">------------------</span>setting up the ports <span style="color: #008000; font-weight: bold">for</span> input
+
+banksel ANSEL
+movlw b<span style="color: #303030">&#39;</span>11111100<span style="color: #303030">&#39;</span>
+movwf ANSEL
+banksel ANSELH
+clrf ANSELH
+bsf ANSELH,ANS11
+bsf ANSELH,ANS8
+bsf ANSELH,ANS9
+banksel TRISC
+movlw b<span style="color: #303030">&#39;</span>11001111<span style="color: #303030">&#39;</span>
+movwf TRISC
+banksel TRISA
+movlw b<span style="color: #303030">&#39;</span>00011111<span style="color: #303030">&#39;</span>
+movwf TRISA
+banksel TRISB
+movlw b<span style="color: #303030">&#39;</span>01110000<span style="color: #303030">&#39;</span>
+movwf TRISB
+banksel PORTA
+clrf PORTA
+banksel PORTB
+clrf PORTB
+banksel PORTC
+clrf PORTC
+banksel T1CON
+movlw b<span style="color: #303030">&#39;</span>00110001<span style="color: #303030">&#39;</span> ;1:1 prescaled value timer run
+movwf T1CON
+
+banksel seconds
+incf seconds
+incf seconds
+
+loop_here
+nop
+goto loop_here
+
+interrupt_handler
+  banksel PIR1
+  btfsc PIR1, SSPIF
+  goto I2C_COMM
+  btfss PIR1, TMR1IF
+  goto Exit
+  goto timer1_ISR
+
+I2C_COMM
+  banksel INTCON
+  movlw b<span style="color: #303030">&#39;</span>00000000<span style="color: #303030">&#39;</span>
+  movwf INTCON
+  banksel PIR1
+  bcf PIR1, SSPIF
+
+;<span style="color: #303030">---------------------------------------------------------------------</span>
+; The I2C code below checks <span style="color: #008000; font-weight: bold">for</span> 5 states:
+;<span style="color: #303030">---------------------------------------------------------------------</span>
+; State 1:  I2C write operation, last byte was an address byte.
+; SSPSTAT bits:  S = 1, D_A = 0, R_W = 0, BF = 1
+;
+; State 2:  I2C write operation, last byte was a data byte.
+; SSPSTAT bits:  S = 1, D_A = 1, R_W = 0, BF = 1
+;
+; State 3:  I2C read operation, last byte was an address byte.
+; SSPSTAT bits: S = 1, D_A = 0, R_W = 1
+;
+; State 4:  I2C read operation, last byte was a data byte.
+; SSPSTAT bits:  S = 1, D_A = 1, R_W = 1, BF = 0
+;
+; State 5:  Slave I2C logic reset by NACK from master.
+; SSPSTAT bits: S = 1, D_A = 1, BF = 0, CKP = 1
+;
+; For convenience, WriteI2C and ReadI2C functions have been used.
+;<span style="color: #303030">--------------------------------------------------------------</span>
+
+banksel SSPSTAT
+movf SSPSTAT,W
+andlw b<span style="color: #303030">&#39;</span>00101101<span style="color: #303030">&#39;</span>
+banksel Temp
+movwf Temp
+
+State1
+    movf Temp,w
+    xorlw b<span style="color: #303030">&#39;</span>00001001<span style="color: #303030">&#39;</span>
+    banksel STATUS
+    btfss STATUS,Z
+    goto State2       
+    banksel SSPBUF
+    movf SSPBUF,W
+    goto Exit
+  
+State2
+    banksel Temp
+    movf Temp,w
+    xorlw b<span style="color: #303030">&#39;</span>00101001<span style="color: #303030">&#39;</span>
+    banksel STATUS
+    btfss STATUS,Z
+    goto State3
+    banksel SSPBUF
+    movf SSPBUF,W
+    banksel on_off
+    movwf on_off
+    sublw sensor_off
+    banksel STATUS
+    btfsc STATUS,Z
+    goto turnoff
+    banksel on_off
+    movf on_off,W
+    sublw sensor_on
+    banksel STATUS
+    btfsc STATUS,Z
+    goto turnon
+    goto Exit
+turnon
+    banksel PORTA
+    bcf PORTA,RA5
+    goto Exit
+    
+turnoff
+    banksel PORTA
+    bsf PORTA,RA5
+    goto Exit
+
+State3
+    banksel Temp
+    movf Temp,W
+    xorlw b<span style="color: #303030">&#39;</span>00001100<span style="color: #303030">&#39;</span>
+    banksel STATUS
+    btfss STATUS,Z
+    goto State4
+    
+    movlw RX_BUF_LEN
+    banksel ADCindex
+    movwf ADCindex        ;Counter <span style="color: #008000; font-weight: bold">for</span> number of ADC operations
+    banksel ADCcount
+    clrf ADCcount
+    movlw b<span style="color: #303030">&#39;</span>00001001<span style="color: #303030">&#39;</span>
+    banksel ADCON0        ;Left justified, VDD ref, AN0, ADC enable
+    movwf ADCON0        ;Set the status <span style="color: #008000; font-weight: bold">for</span> ADC
+    nop
+    nop
+
+adc_loop
+    banksel ADCON0
+    bsf ADCON0, GO        ;Initiate ADC
+    nop
+    nop
+    nop
+    btfsc ADCON0, GO    ;IS ADC complete?
+    goto $<span style="color: #303030">-</span>1            ;If not then loop back and check again
+
+;SAVE DATA HERE
+
+    banksel RXBuffer
+    movlw RXBuffer
+    banksel FSR
+    movwf FSR
+    banksel ADCcount
+    movf ADCcount, 0
+    banksel FSR
+    addwf FSR,1
+    banksel ADRESH
+    movf ADRESH, 0        ;Capture data
+    movwf INDF
+
+    banksel ADCcount
+    incf ADCcount,F        ;Increment index
+    banksel ADCON0
+    movlw b<span style="color: #303030">&#39;</span>00000100<span style="color: #303030">&#39;</span>
+    addwf ADCON0,1    ;Select next ADC, but keep other settings same
+    banksel ADCindex
+    decfsz ADCindex,F    ;Countdown the number of ADC read, loop back
+    goto adc_loop
+    nop
+    banksel Index
+    clrf Index                ; Clear the buffer index.
+    LFSR RXBuffer,Index    ; Point to the buffer
+    movf INDF,W            ; Get the byte from buffer.      
+    goto WriteI2C
+       
+State4
+        banksel Temp
+        movf Temp,W
+        xorlw b<span style="color: #303030">&#39;</span>00101100<span style="color: #303030">&#39;</span>
+        banksel STATUS
+        btfss STATUS,Z
+        goto State5
+        banksel Index
+    movf Index,W
+    sublw RX_BUF_LEN
+    banksel STATUS
+    btfsc STATUS,Z
+    goto Clear_index
+    goto ready
+ready   
+    banksel Index
+    movf Index,W
+    LFSR RXBuffer,Index
+    movf INDF,W
+    goto WriteI2C
+
+Clear_index
+    banksel Index
+    clrf Index
+    goto ready
+
+        
+State5
+        banksel SSPCON
+        movlw b<span style="color: #303030">&#39;</span>00110110<span style="color: #303030">&#39;</span>
+        movwf SSPCON
+        banksel SSPSTAT
+        clrf SSPSTAT
+        goto Exit
+
+Exit
+      banksel PIR1
+        bcf PIR1,SSPIF
+        banksel SSPCON
+        bsf SSPCON,CKP
+        goto Exit1
+        
+Exit1
+      banksel INTCON
+      movlw b<span style="color: #303030">&#39;</span>11000000<span style="color: #303030">&#39;</span>
+      movwf INTCON ; <span style="color: #008000; font-weight: bold">global</span> interrupts and peripheral interrupts are on
+      retfie
+
+WriteI2C
+    banksel SSPSTAT
+    btfsc SSPSTAT,BF        ; Is the buffer full?
+    goto WriteI2C            ; Yes, keep waiting.
+    banksel SSPCON            ; No, <span style="color: #008000; font-weight: bold">continue</span>.
+
+DoI2CWrite
+      bcf SSPCON,WCOL        ; Clear the WCOL flag.
+      banksel SSPBUF
+      movwf SSPBUF            ; Write the byte in WREG
+      banksel SSPCON
+      btfsc SSPCON,WCOL        ; Was there a write collision?
+      goto DoI2CWrite
+      banksel SSPCON
+      bsf SSPCON,CKP            ; Release the clock.
+      banksel Index
+      incf Index,F            ; Increment the buffer index.
+      goto Exit
+      
+timer1_ISR
+      banksel PIR1 ;this register contains flags including the one <span style="color: #008000; font-weight: bold">for</span> timer1
+      bcf PIR1,TMR1IF
+      banksel seconds
+      decfsz seconds
+      goto Exit1
+      banksel seconds
+      movlw b<span style="color: #303030">&#39;</span>00000010<span style="color: #303030">&#39;</span>
+      movwf seconds
+
+banksel ADCON0
+      movlw b<span style="color: #303030">&#39;</span>00101101<span style="color: #303030">&#39;</span>
+      movwf ADCON0
+      nop
+      nop
+      nop
+    bsf ADCON0,GO
+      nop
+      nop
+      nop
+      btfsc ADCON0, GO    ;IS ADC complete?
+      goto $<span style="color: #303030">-</span>1            ;If not then loop back and check again
+      banksel ADRESH
+      movf ADRESH,0
+      banksel battery_level
+      movwf battery_level
+      banksel ADRESH
+      btfss ADRESH,7
+      goto low_battery
+    btfsc ADRESH,6
+      goto high_battery
+    btfss ADRESH,5
+      goto low_battery
+    goto high_battery
+
+high_battery
+      banksel PORTC
+      bcf PORTC,RC4
+      goto Exit1
+low_battery
+      banksel PORTC
+      bsf PORTC,RC4
+      goto Exit1
+<span style="color: #008000; font-weight: bold">end</span>
+</pre></div>
+    
+</div>
+{% endblock %}

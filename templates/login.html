@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="right-side">
+
+    <span class = "heading">Sign in to your account:</span>
+    <br>
+    <br>
+    <br>
+    <span class = "des_text">Please login to your account to pre-order Trinfactor 3 or to post in the discussion blog.</span>
+    <hr>
+    <form method="post">
+      <table>  
+          <tr class="label_signup">
+          <td >
+            Username:
+          </td>
+          <td>
+            <input type="text"  class = "signup_form" name="username" value = {{username}}>
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td >
+            Password:
+          </td>
+          <td>
+            <input type="password"  class = "signup_form"  name="password" value = {{password}}> 
+          </td>
+          <td class="error">
+            {{error}}
+          </td>
+        </tr>
+      </table>
+    
+  <hr>
+      <input class = "button1" type="submit" value="Sign In">
+    </form>
+
+    <hr>
+
+<span class = "des_text">Do not have an account? </span><span class = "red"><a href="/signup">Sign Up!</a></span>
+</div>
+{% endblock %}
+
+

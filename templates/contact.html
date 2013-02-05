@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="right-side">
+   <span class = "heading">Contact info</span>
+    <br>
+    <br>
+    <br>
+    <span class = "des_text">Please contact <a href="mailto:binay.poudel@trincoll.edu">Binay Poudel</a> at binay.poudel@trincoll.edu for technical details or <a href="mailto:david.ahlgren@trincoll.edu">David Ahlgren</a> at david.ahlgren@trincoll.edu for any other purpose.</span>
+    <hr>
+ </div>
+ <div class="right-side" style = "padding: 5px; background-color:#006699; color:white; text-align:center; font: Arial; font-size: 30px; ">
+    User Blog
+</div>
+<div class="right-side">
+    {% if User=="" %}
+        <span class = "des_text">Please <a href = "/login">sign in</a> to post in the blog.</span>
+    {% else %}
+    	 <span class = "heading" style = "text-align: center;">New Post</h1>
+    	<form method="post">
+        <label>
+            <div>Post:</div>
+            <textarea name="content" id="styled" onfocus="this.value=''; setbg('#e5fff3');" onblur="setbg('white')">{{newpost_bpost}}</textarea>
+        </label>
+        <input type="submit" class = "button_submit">
+        <br>
+        {{Blog_error}}
+    </form>
+    <span class="error">{% endif %}</span>
+    {% for post in posts %}
+    <hr>
+
+    <div class="post">
+    <div class="post-heading">
+    <div class="post-title">
+      {{post.user}}
+    </div>
+
+    <div class="post-date">
+      {{post.created.strftime("%a %b %d %Y %H:%M:%S ")}}
+    </div>
+    </div>
+    <br>
+    <div class="post-content"><pre>{{post.bpost}}</pre>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

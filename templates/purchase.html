@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+  {% if User %}
+  <div class="right-side">
+
+    <span class = "heading">PreOrder:</span>
+    <br>
+    <br>
+    <br>
+    <span class = "des_text">Please fill up the form if you'd like to purchase Trinfactor 3. We will contact you in your email account once we recieve about 100 orders. You can channge your address if necessary.</span>
+    <hr>
+    <form method="post">
+      <table>
+        
+        <tr class="label_signup">
+          <td >
+            Address:
+          </td>
+          <td>
+            <input type="text"  class = "signup_form" name="Address" value = {{username}}>
+          </td>
+          <td class="error">
+            {{error_User}}
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td >
+            City:
+          </td>
+          <td>
+            <input type="text"  class = "signup_form"  name="City" value = {{password}}> 
+          </td>
+          <td class="error">
+            {{error_Password}}
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td >
+            State:
+          </td>
+          <td>
+            <input type="text"  class = "signup_form"  name="State" value = {{verify}}>
+          </td>
+          <td class="error">
+            {{error_Verify}}
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td>
+            Country: 
+          </td>
+          <td>
+            <input type="text"  class = "signup_form" name="Country" value={{email}}>
+          </td>
+          <td class="error">
+            {{error_Email}}
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td>
+            Quantity: 
+          </td>
+          <td>
+            <input type="number"  class = "signup_form" name="Quantity" value={{email}}>
+          </td>
+          <td class="error">
+            {{error_Email}}
+          </td>
+        </tr>
+      </table>
+  
+  <hr>
+      <input class = "button1" type="submit" value="Place Order">
+    </form>
+
+    <hr>
+</div>
+
+  {% else %}
+  <div class="right-side">
+     <span class = "des_text">Please Signup to preorder TF3. You would be provided a form where you can select the number of units you need and your mailing address. We expect to recieve minimum number of orders (100) by December. We will contact you once we are ready to ship. 
+      <br>
+      NOTE: You DO NOT need to provide any credit card information to pre-order.</span>
+  </div>
+  {% endif %}
+  {% endblock %}
+
+
+    

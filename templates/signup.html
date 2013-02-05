@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="right-side">
+
+    <span class = "heading">Account Registration:</span>
+    <br>
+    <br>
+    <br>
+    <span class = "des_text">Please fill up the form if you'd like to purchase Trinfactor 3 or post in the Blog. Depending upon the number of interested buyers, price per unit will be anywhere between $50 - $70. For now, no credit card information is necessary. We will contact you in your email account once we recieve about 100 orders. Select an username and use a valid email id where you can receive emails.</span>
+    <hr>
+    <form method="post">
+      <table>
+        
+	      <tr class="label_signup">
+          <td >
+            Username:
+          </td>
+          <td>
+            <input type="text"  class = "signup_form" name="username" value = {{username}}>
+          </td>
+          <td class="error">
+            {{error_User}}
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td >
+            Password:
+          </td>
+          <td>
+            <input type="password"  class = "signup_form"  name="password" value = {{password}}> 
+          </td>
+          <td class="error">
+            {{error_Password}}
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td >
+            Verify Password:
+          </td>
+          <td>
+            <input type="password"  class = "signup_form"  name="verify" value = {{verify}}>
+          </td>
+          <td class="error">
+            {{error_Verify}}
+          </td>
+        </tr>
+
+        <tr class="label_signup">
+          <td>
+            Email: 
+          </td>
+          <td>
+            <input type="text"  class = "signup_form" name="email" value={{email}}>
+          </td>
+          <td class="error">
+            {{error_Email}}
+          </td>
+        </tr>
+      </table>
+	
+  <hr>
+      <input class = "button1" type="submit" value="Sign Up">
+    </form>
+
+    <hr>
+
+<span class = "des_text">Have an account already? </span><a href="/login"><span class = "red">Log in!</span></a>
+</div>
+{% endblock %}
